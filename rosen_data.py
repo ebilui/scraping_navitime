@@ -1,6 +1,6 @@
 import pandas as pd
 
-bas_data = pd.read_csv('./csv/query_result.csv')
+bas_data = pd.read_csv('./csv/merged.csv')
 # pd.set_option('display.max_rows', None)
 df = pd.DataFrame(bas_data)
 i=1
