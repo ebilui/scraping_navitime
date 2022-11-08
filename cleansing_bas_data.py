@@ -76,24 +76,26 @@ class Cleansing:
         df.to_csv('./csv/バス停.csv', index=False)
     
     def add_city(self):
-        bas_data = pd.read_csv('./csv/バス停.csv')
-        df = pd.DataFrame(bas_data)
-        self.lat_lon_arr = df[['緯度','経度']].values.tolist()
-        cities = Cleansing.get_cities(self)
-        df['市区町村名'] = cities
-        df = df.loc[:, ['バス停ID', 'バス会社名称', 'バス停名称', '緯度', '経度', '市区町村名']]
-        df.sort_values(by='バス停ID', inplace=True)
-        df.to_csv('./csv/市区町村バス停.csv', index=False)
+        with open('./csv/市区町村バス停.csv', 'w', encoding='utf-8', newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(['バス停ID', 'バス会社名称', 'バス停名称', '緯度', '経度', '市区町村名'])
+        # bas_data = pd.read_csv('./csv/バス停.csv')
+        bas_data = pd.read_csv('./test_bas.csv')
+        self.df = pd.DataFrame(bas_data)
+        self.lat_lon_arr = self.df[['緯度','経度']].values.tolist()
+        Cleansing.get_cities(self)
 
     def get_cities(self):
-        cities = []
+        src=shapefile.Reader('./japan_ver84/japan_ver84.shp',encoding='SHIFT-JIS')
+        SRS=src.shapeRecords()
+        i = 0
         for lat_lon in self.lat_lon_arr:
+            print(i)
+            print(lat_lon)
             time_sta = time.time()
             LONG=lat_lon[1]
             LAT=lat_lon[0]
             RPOINT=Point(LONG,LAT)
-            src=shapefile.Reader('./japan_ver84/japan_ver84.shp',encoding='SHIFT-JIS')
-            SRS=src.shapeRecords()
             for srs in SRS:
                 shp=srs.shape
                 rec=srs.record
@@ -106,13 +108,18 @@ class Cleansing:
                     poly=Polygon(*points)
                     #
                     if poly.encloses_point(RPOINT):
-                        print(rec[5])
-                        cities.append(rec[5])
+                        self.city = rec[5]
+                        Cleansing.write_csv(self)
                         break
             time_end = time.time()
             tim = time_end - time_sta
             print('処理時間 : ' + str(tim))
-        return cities
+            i+=1
+
+    def write_csv(self):
+        with open('./csv/市区町村バス停.csv', 'a', encoding='utf-8', newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([self.city])
 
 
 if __name__=='__main__':
