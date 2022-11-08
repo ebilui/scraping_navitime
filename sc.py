@@ -14,10 +14,10 @@ class BasDataMac:
             'http': 'socks5://localhost:9050',
             'https': 'socks5://localhost:9050'
         }
-        with open('./バス路線.csv', 'w', newline="") as f:
+        with open('./csv/バス路線_before.csv', 'w', newline="") as f:
             writer = csv.writer(f)
             writer.writerow(['会社名', '路線名', 'バス停名', '緯度', '経度'])
-        self.csv_file = open("./人力データ収集 - バス会社url.csv", "r", encoding="utf-8")
+        self.csv_file = open("./csv/人力データ収集 - バス会社url.csv", "r", encoding="utf-8")
         self.f = csv.reader(self.csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         self.err_msg = None
 
@@ -50,7 +50,7 @@ class BasDataMac:
 
     def write_csv(self):
         try:
-            with open('./バス路線.csv', 'a', newline="") as f:
+            with open('./csv/バス路線_before.csv', 'a', newline="") as f:
                 writer = csv.writer(f)
                 writer.writerows(self.data)
         except:
@@ -71,10 +71,10 @@ class BasDataWin:
             'https': 'socks5://localhost:9050'
         }
         self.headers_dic = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36"}
-        with open('./バス路線.csv', 'w', encoding='utf-8', newline="") as f:
+        with open('./csv/バス路線_before.csv', 'w', encoding='utf-8', newline="") as f:
             writer = csv.writer(f)
             writer.writerow(['会社名', '路線名', 'バス停名', '緯度', '経度'])
-        self.csv_file = open("./人力データ収集 - バス会社url.csv", "r", encoding="utf-8")
+        self.csv_file = open("./csv/人力データ収集 - バス会社url.csv", "r", encoding="utf-8")
         self.f = csv.reader(self.csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         self.exist = True
 
@@ -109,7 +109,7 @@ class BasDataWin:
     def write_csv(self):
         try:
             print('outputting data...')
-            with open('./バス路線.csv', 'a', encoding='utf-8', newline="") as f:
+            with open('./csv/バス路線_before.csv', 'a', encoding='utf-8', newline="") as f:
                 writer = csv.writer(f)
                 writer.writerows(self.data)
             print('success')
