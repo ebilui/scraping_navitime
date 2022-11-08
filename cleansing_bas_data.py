@@ -75,6 +75,22 @@ class Cleansing:
         df.sort_values(by='バス停ID', inplace=True)
         df.to_csv('./csv/バス停.csv', index=False)
     
+    def join(self):
+        df = pd.read_csv('./csv/バス路線.csv', encoding='utf-8')
+        df2 = pd.read_csv('./csv/バス停.csv', encoding='utf-8')
+        df3 = pd.read_csv('./csv/路線.csv', encoding='utf-8')
+
+        # universitiesのIDを学校IDという名前に変更する
+        # df2_ = df2.rename(columns={'ID': '学校ID'})
+        df2 = df2.drop(["バス停名称","バス会社名称"],axis=1)
+
+        # 学校IDというキーを元にして２つのCSVを結合する
+        df_merged = pd.merge(df, df2, on=['緯度','経度'], how='left')
+        df_merged = pd.merge(df_merged, df3, on='路線名称', how='left')
+
+        df_merged.to_csv("./csv/merged.csv", index=False)
+
+class City:
     def add_city(self):
         bas_data = pd.read_csv('./csv/バス停.csv')
         df = pd.DataFrame(bas_data)
@@ -116,15 +132,18 @@ class Cleansing:
 
 
 if __name__=='__main__':
-    cleansing = Cleansing()
     is_city_function = input("""処理をしたい方を入力してください。
     1  データクレンジング
     2  市区町村取得
+    3  
     :""")
     if int(is_city_function) == 1:
+        cleansing = Cleansing()
         cleansing.company()
         cleansing.zen_to_han()
         cleansing.route()
         cleansing.lan_lon()
+        cleansing.join()
     else:
-        cleansing.add_city()
+        city = City()
+        city.add_city()
