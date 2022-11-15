@@ -66,14 +66,15 @@ class Cleansing:
     def lan_lon(self):
         bas_data = pd.read_csv('./csv/バス路線.csv')
         df = pd.DataFrame(bas_data)
-        print(df.duplicated(subset=['緯度', '経度']).sum())
-        df.drop_duplicates(subset=['緯度', '経度'], inplace=True)
+        print(df.duplicated(subset=['緯度', '経度', 'バス停名称']).sum())
+        df.drop_duplicates(subset=['緯度', '経度', 'バス停名称'], inplace=True)
         df.drop('路線名称', axis=1)
+        df = df.replace('\(.+?\)', {'バス停名称':''}, regex=True)
+        df.sort_values(by='バス停名称', inplace=True)
         serial_num = pd.RangeIndex(start=1, stop=len(df.index) + 1, step=1)
         df['バス停ID'] = serial_num
         df = df.loc[:, ['バス停ID', 'バス会社名称', 'バス停名称', '緯度', '経度']]
-        df.sort_values(by='バス停ID', inplace=True)
-        df.to_csv('./csv/バス停.csv', index=False)
+        df.to_csv('./csv/ver.2バス停.csv', index=False)
     
     def join(self):
         df = pd.read_csv('./csv/バス路線.csv', encoding='utf-8')
@@ -96,7 +97,7 @@ class City:
             writer = csv.writer(f)
             writer.writerow(['バス停ID', 'バス会社名称', 'バス停名称', '緯度', '経度', '市区町村名'])
         # bas_data = pd.read_csv('./csv/バス停.csv')
-        bas_data = pd.read_csv('./test_bas.csv')
+        bas_data = pd.read_csv('./バス停.csv')
         self.df = pd.DataFrame(bas_data)
         self.lat_lon_arr = self.df[['緯度','経度']].values.tolist()
         Cleansing.get_cities(self)
@@ -146,11 +147,11 @@ if __name__=='__main__':
     :""")
     if int(is_city_function) == 1:
         cleansing = Cleansing()
-        cleansing.company()
-        cleansing.zen_to_han()
-        cleansing.route()
+        # cleansing.company()
+        # cleansing.zen_to_han()
+        # cleansing.route()
         cleansing.lan_lon()
-        cleansing.join()
+        # cleansing.join()
     else:
         city = City()
         city.add_city()

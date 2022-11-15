@@ -14,4 +14,4 @@ while ((df['路線ID']==i).sum()) != 0:
     i+=1
 df['停車順番'] = serial_num
 df = df.loc[:, ['路線ID', '停車順番', 'バス会社ID', 'バス停ID', 'バス停名称', '路線名称']]
-df.to_csv('./csv/路線データ.csv', index=False)
+df.to_csv('./csv/路線データ.csv', index_label='ID')
