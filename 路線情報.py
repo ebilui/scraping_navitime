@@ -42,12 +42,16 @@ class RosenJouhou:
         soup = BeautifulSoup(res.text, 'html.parser')
         table = soup.find('table', class_='route-table')
         tbody = table.find('tbody')
+        tr = tbody.find_all('tr')
         th_arr = tbody.find_all('th')
-        for th in th_arr:
-            print(th)
-            a = th.find('a')
+        for i in range(len(th_arr)):
+            print(th_arr[i])
+            td = tr[i].find_all('td')[1]
+            a = th_arr[i].find('a')
             href = a.attrs.get('href')
             self.rosen = a.get_text()
+            self.where_to_where = td.get_text()
+            print(self.where_to_where)
             res = RosenJouhou.search('self', 'https://mb.jorudan.co.jp/'+href)
             RosenJouhou.get_stop_station(self, res)
 
@@ -55,7 +59,6 @@ class RosenJouhou:
         soup = BeautifulSoup(res.text, 'html.parser')
         ul = soup.find('ul', class_='route')
         li_arr = ul.find_all('li')
-        self.where_to_where = li_arr[1].find('a').get_text() + '~' + li_arr[-1].find('a').get_text()
         stop_lines = []
         i = 0
         for li in li_arr:
