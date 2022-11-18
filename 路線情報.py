@@ -66,17 +66,14 @@ class RosenJouhou:
         for i in range(len(stop_lines[0])):
             line = []
             houmen = ''
-            if 'down' in stop_lines[0][i]:
-                houmen = 'down'
-            else:
-                houmen = 'up'
             for l in range(len(stop_lines)):
                 if stop_lines[l][i] == '':
                     continue
-                print(stop_lines[0][i])
-                if houmen == 'down':
+                if 'down' in stop_lines[l][i]:
+                    houmen = 'down'
                     stop_lines[l][i] = stop_lines[l][i].replace(' down', '')
                 else:
+                    houmen = 'up'
                     stop_lines[l][i] = stop_lines[l][i].replace(' up', '')
                 line.append(stop_lines[l][i])
             lines.append({houmen: line})
