@@ -10,12 +10,8 @@ import json
 # user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
 # options = webdriver.ChromeOptions()
 # options.add_argument('--uer-agent='+user_agent)
-name_list = ['上野松坂屋前']
-url = 'https://mb.jorudan.co.jp/os/sp/bus/rosenbus.cgi?mode=sh&word=上野松坂屋前'
-res = requests.get(url)
-soup = BeautifulSoup(res.text, 'html.parser')
-tbody = soup.find('tbody')
-print(tbody.contents)
+res = requests.get('https://mb.jorudan.co.jp/os/bus/1301/line/4211.html')
+print(res.text)
 
 # print(json_load)
 # print(json_load )
@@ -28,3 +24,10 @@ print(tbody.contents)
 # title_part = soup.find("script", {"type": "application/ld+json"})
 # print(title_part)
 # time.sleep(1000)
+
+
+
+# --------------
+# |緯度＋0.00322|
+# |軽度ー0.00322|
+# --------------
