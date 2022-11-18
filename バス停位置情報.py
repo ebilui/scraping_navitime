@@ -5,13 +5,13 @@ import csv
 import sys
 import re
 
-file = open('./waaaa.csv', 'r', encoding='utf-8')
+with open('./csv/乗換案内NEXT緯度経度バス停.csv', 'w', newline='', encoding='utf-8') as f:
+    writer = csv.writer(f)
+    writer.writerow(['会社名称','路線名称','どこからどこまで','行き方面','帰り方面','バス停名称','url','緯度','経度'])
+file = open('./csv/乗換案内NEXT路線.csv', 'r', encoding='utf-8')
 header = next(csv.reader(file))
 reader = csv.reader(file)
-i = 0
 for row in reader:
-    if i == 1:
-        break
     res = requests.get(row[-1])
     soup = BeautifulSoup(res.text, 'html.parser')
     table = soup.find('table', class_='pole')
@@ -32,6 +32,7 @@ for row in reader:
         exist_or_not.append('exist')
         span = tr.find('span', class_='check')
         noriba = span.get_text()
+        print(noriba)
     if not 'exist' in exist_or_not:
         print('ERROR: there is no station in list')
         sys.exit()
@@ -43,12 +44,15 @@ for row in reader:
     lat = re.findall(r"(?<=\$\.jorudan\.addMarker\({'lat':)(.*)(?=,'lon')", str(lan_lon_script))
     lon = re.findall(r"(?<=,'lon':)(.*)(?=,'text')", str(lan_lon_script))
     i=0
-    print(noriba)
     for script_noriba in script_noriba_arr:
         if noriba in script_noriba:
             break
         i+=1
-    print(lat[i])
-    print(lon[i])
-    # model_data = model_data.group(1)
-    i+=1
+    print(row[1]+'　'+row[-1])
+    print(eval(lat[i])+0.00322)
+    print(eval(lon[i])-0.00322)
+    with open('./csv/乗換案内NEXT緯度経度バス停.csv', 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        row+=[eval(lat[i])+0.00322, eval(lon[i])-0.00322]
+        writer.writerow(row)
+file.close()

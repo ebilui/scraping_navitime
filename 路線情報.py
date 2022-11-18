@@ -5,7 +5,7 @@ import csv
 
 class RosenJouhou:
     def __init__(self):
-        with open('./test.csv', 'w', newline='', encoding='utf-8') as f:
+        with open('./csv/乗換案内NEXT路線.csv', 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(['会社名称', '路線名称', 'どこからどこまで', '行き方面', '帰り方面', 'バス停名称', 'url'])
 
@@ -61,10 +61,12 @@ class RosenJouhou:
         li_arr = ul.find_all('li')
         stop_lines = []
         i = 0
+        url = []
         for li in li_arr:
             if i==0:
                 i+=1
                 continue
+            url.append('https://mb.jorudan.co.jp/'+li.find('a').attrs['href'])
             img_arr = li.find_all('img')
             stop_station = []
             for img in img_arr:
@@ -80,9 +82,9 @@ class RosenJouhou:
             stop_lines.append(stop_station)
 
         lines = []
+        stop_url = []
         for i in range(len(stop_lines[0])):
             line = []
-            url = []
             houmen = ''
             for l in range(len(stop_lines)):
                 if stop_lines[l][i] == '':
@@ -93,9 +95,9 @@ class RosenJouhou:
                 else:
                     houmen = 'up'
                     stop_lines[l][i] = stop_lines[l][i].replace(' up', '')
-                url.append('https://mb.jorudan.co.jp/'+li.find('a').attrs['href'])
+                stop_url.append(url[l])
                 line.append(stop_lines[l][i])
-            lines.append({houmen: [line,url]})
+            lines.append({houmen: [line,stop_url]})
         RosenJouhou.output(self, lines)
 
     def output(self, lines):
