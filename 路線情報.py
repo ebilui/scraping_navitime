@@ -7,7 +7,7 @@ class RosenJouhou:
     def __init__(self):
         with open('./test.csv', 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(['会社名称', '路線名称', 'どこからどこまで', '行き方面', '帰り方面', 'バス停名称'])
+            writer.writerow(['会社名称', '路線名称', 'どこからどこまで', '行き方面', '帰り方面', 'バス停名称', 'url'])
 
     def search(self, url):
         res = requests.get(url)
@@ -23,14 +23,28 @@ class RosenJouhou:
             a = li.find('a')
             self.company = a.get_text()
             href = a.attrs.get('href')
-            res = RosenJouhou.search(self, 'https://mb.jorudan.co.jp/'+href)
-            RosenJouhou.search_by_rosen(self, res)
+            i=1
+            still_page = True
+            while still_page:
+                print('still_page：'+str(still_page))
+                print(i)
+                res = RosenJouhou.search(self, 'https://mb.jorudan.co.jp'+href+'line/?page='+str(i))
+                print(res.url)
+                print('https://mb.jorudan.co.jp'+href+'line/')
+                if str(res.url) != 'https://mb.jorudan.co.jp'+href+'line/':
+                    RosenJouhou.search_by_rosen(self, res)
+                    i+=1
+                else:
+                    print('over page')
+                    still_page = False
 
     def search_by_rosen(self, res):
         soup = BeautifulSoup(res.text, 'html.parser')
-        table = soup.find('table', class_='route')
-        th_arr = table.find_all('th')
+        table = soup.find('table', class_='route-table')
+        tbody = table.find('tbody')
+        th_arr = tbody.find_all('th')
         for th in th_arr:
+            print(th)
             a = th.find('a')
             href = a.attrs.get('href')
             self.rosen = a.get_text()
@@ -65,6 +79,7 @@ class RosenJouhou:
         lines = []
         for i in range(len(stop_lines[0])):
             line = []
+            url = []
             houmen = ''
             for l in range(len(stop_lines)):
                 if stop_lines[l][i] == '':
@@ -75,8 +90,9 @@ class RosenJouhou:
                 else:
                     houmen = 'up'
                     stop_lines[l][i] = stop_lines[l][i].replace(' up', '')
+                url.append('https://mb.jorudan.co.jp/'+li.find('a').attrs['href'])
                 line.append(stop_lines[l][i])
-            lines.append({houmen: line})
+            lines.append({houmen: [line,url]})
         RosenJouhou.output(self, lines)
 
     def output(self, lines):
@@ -84,15 +100,17 @@ class RosenJouhou:
             writer = csv.writer(f)
             for line in lines:
                 houmen = list(line.keys())[0]
-                stations = list(line.values())[0]
+                values = list(line.values())[0]
+                stations = values[0]
+                urls = values[1]
                 if houmen == 'down':
                     iki_houmen = stations[-1]+'方面'
                     hantai_houmen = stations[0]+'方面'
                 else:
                     iki_houmen = stations[0]+'方面'
                     hantai_houmen = stations[-1]+'方面'
-                for station in stations:
-                    writer.writerow([self.company, self.rosen, self.where_to_where, iki_houmen, hantai_houmen, station])
+                for i in range(len(stations)):
+                    writer.writerow([self.company, self.rosen, self.where_to_where, iki_houmen, hantai_houmen, stations[i], urls[i]])
 
 if __name__ == '__main__':
     rosen_jouhou = RosenJouhou()
