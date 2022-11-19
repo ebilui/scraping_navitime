@@ -1,2 +1,4 @@
 venv/
 tor-win32-0.4.7.10/
+./csv/乗換案内NEXT緯度経度バス停.csv
+./csv/乗換案内NEXT路線.csv
