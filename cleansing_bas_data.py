@@ -10,86 +10,116 @@ import time
 
 class Cleansing:
     def __init__(self):
-        self.cp_id_dec = {}
-        with open('./csv/バス会社一覧.csv','r', encoding='utf-8') as f:
-            next(csv.reader(f))
-            companies = csv.reader(f, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
-            for company in companies:
-                self.cp_id_dec[company[1]] = company[0]
+        bas_data = pd.read_csv('./csv/バス会社一覧.csv')
+        self.company_df = pd.DataFrame(bas_data)
+        self.company_df.to_csv('./乗換NEXT全データ/バス会社.csv', index=False)
 
     def company(self):
-        to_company = {'京成バス/京成タウンバス':'京成バス（株）', '都営バス/京王バス':'都営バス', '日立自動車交通':'日立自動車交通', '国際興業バス':'国際興業（株）', 'ＣｏＣｏバス':'小金井市', 'めぐりん(台東区)':'台東区', 'ぶんバス(国分寺市)':'国分寺市', 'グリーンバス':'東村山市', '京急バス':'京成バス（株）', 'にじバス':'小平市', 'さくら(葛飾区)':'葛飾区', 'ウィラー(高速バス)':'高速バス', 'ちゅうバス':'府中市', 'Aバス(昭島市)':'昭島市', '関越交通':'関越交通（株）', 'くにっこ':'国立市', '板橋区コミュニティバス':'板橋区', 'ぐるりーんひのでちゃん':'日出町', 'コミュニティ交通(江戸川区)':'江戸川区', '船橋新京成バス':'船橋新京成バス', '国際興業バス/関東バス':'関東バス（株）', 'ＶＩＰライナー(高速バス)':'高速バス', 'さくら高速バス(高速バス)':'高速バス', '東急/ちばシティ/トランジット/京王':'京成トランジットバス', '千葉みらい観光バス(高速バス)':'高速バス', '高速バス':'高速バス', 'Dts creation(高速バス)':'高速バス', 'お台場レインボーバス':'NULL', '三宅村営バス':'三宅村', '青木バス(高速バス)':'高速バス', '京王バス/小田急バス':'京王バス', 'キラキラ号(高速バス)':'高速バス', '臨港バス':'川崎鶴見臨港バス', '千葉みらい観光/三栄交通(高速バス)':'高速バス', '小湊鉄道/東京バス':'小湊鉄道', 'やまびこ号(檜原村)':'檜原村', '風ぐるま(千代田区)':'千代田区', '東京富士交通(高速バス)':'高速バス', '西武バス/立川バス':'西武バス（株）', '中日本ツアーバス(高速バス)':'高速バス', '銀河鉄道':'銀河鉄道（株）', '東急トランセ':'東急バス・東急トランセ', 'MMシャトル(武蔵村山市)':'武蔵村山市', 'ちばグリーンバス':'ちばグリーンバス', 'オリオンバス(高速バス)':'高速バス', '関東鉄道':'関東鉄道（株）', '東武バス':'東武バス', '山一サービス/武井観光(高速バス)':'高速バス', '八丈町営バス':'八丈町', 'くるりんバス':'日進市', '小笠原村営バス':'小笠原村', '神姫観光バス(高速バス)':'高速バス', '小湊鉄道':'小湊鉄道', '足立区社会実験バス':'足立区', '大新東バス(高速バス)':'高速バス', '東急バス':'東急バス（株）', '京成トランジットバス/京王バス東':'京成トランジットバス', '瑞穂町コミュニティバス':'瑞穂町', 'みどりバス':'練馬区', '昌栄交通(高速バス)':'高速バス', '関越交通/川越観光自動車':'関越交通（株）', '都営バス/京成タウンバス':'都営バス', 'ユタカ交通(高速バス)':'高速バス', '成田空港交通':'成田空港交通', '千葉中央バス':'千葉中央バス', '西武バス':'西武バス（株）', 'にいバス(新座市)':'新座市', '京成バス/小湊鐵道':'小湊鉄道', 'IKEBUS':'豊島区', '岩手県北バス(高速バス)':'高速バス', '高知駅前観光(高速バス)':'高速バス', '会津バス(高速バス)':'高速バス', 'CoCoバス(小金井市)［野川・七軒家循環］':'小金井市', 'グレース観光バス(高速バス)':'高速バス', 'ユタカコーポレーション(高速バス)':'高速バス', 'ちぃばす':'港区', 'ちょこバス':'東大和市', 'アウル交通(高速バス)':'高速バス', 'フジエクスプレス':'高速バス', 'すぎ丸':'杉並区', 'サンシャインエクスプレス(高速バス)':'高速バス', '西東京バス':'西東京バス（株）', '武井観光(高速バス)':'高速バス', '泉観光バス(高速バス)':'高速バス', '京成タウンバス/マイスカイ交通':'京成タウンバス', '京成/トラン/国際興業':'京成トランジットバス', '千葉内陸バス':'千葉内陸バス', '琴平バス(高速バス)':'高速バス', 'しなバス':'品川区', 'パリポリくんバス':'草加市', '小田急バス':'小田急バス（株）', '日野市ミニバス':'日野市', '西武バス/国際興業バス':'西武バス（株）', 'はなバス':'西東京市', '村営バス(神津島村)':'神津島村', '杉崎観光バス(高速バス)':'高速バス', '新宿WEバス':'京王バス', '朝日バス':'朝日バス', '江戸バス(中央区)':'中央区', 'ハチ公バス':'渋谷区', '関東バス':'関東バス（株）', '平和交通':'平和交通', '平和交通/あすか交通':'平和交通', '広栄交通バス(高速バス)':'高速バス', 'JRバス関東':'JRバス関東（株）', 'かわせみ号':'町田市', 'Bーぐる(文京区)':'文京区', '京成バス':'京成バス（株）', '都営バス':'都営バス', '東急バス/小田急バス':'東急バス（株）', '京王バス/神奈川中央交通':'京王バス', '新島村コミュニティバス':'新島村', '海部観光(高速バス)':'高速バス', 'るのバス':'西東京バス（株）', '日の丸自動車':'日の丸自動車興業', 'かわせみゴー':'日野市', '西武バス/関東バス':'西武バス（株）', '新日本観光自動車':'足立区', 'ぶるべー号':'小平市', 'ウエスト観光バス(高速バス)':'高速バス', 'さくら観光バス(高速バス)':'高速バス', 'ジャムジャムライナー(高速バス)':'高速バス', 'はちバス':'西東京バス（株）', '大島バス':'大島旅客自動車（株）', 'きよバス':'清瀬市', 'しおかぜ':'江東区', 'シャトルバス':'NULL', '立川バス':'立川バス（株）', '天領バス(高速バス)':'高速バス', '神奈川中央交通':'神奈川中央交通（株）', 'みんななかまバス':'川口市', '小田急バス/神奈川中央交通':'小田急バス（株）', 'ところバス':'所沢市', 'レインボーかつしか(葛飾区)':'葛飾区', '夜間温泉巡回バス(神津島村)':'神津島村', '京王バス/関東バス':'京王バス', '京王バス':'京王バス', 'Kバス(北区)':'北区', '多摩市ミニバス':'多摩市', 'はむらん':'羽村市'}
-        csv_file = open("./csv/バス路線_before.csv", "r", encoding="utf-8")
-        bas_data_arr = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
-        i = 0
-        company = []
-        error = []
-        for bas_data in bas_data_arr:
-            if i==0:
-                i+=1
-                continue
-            route = bas_data[1]
-            key = re.findall('(?<=\[).+?(?=\])', route)[-1]
-            if key in to_company:
-                fix_company = to_company[key]
-                bas_data[0] = fix_company
-                company.append(bas_data)
-                i+=1
-            else:
-                error.append(bas_data)
-        with open('./csv/バス路線.csv', 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(['バス会社名称','路線名称','バス停名称','緯度','経度'])
-            writer.writerows(company)
-        csv_file.close()
-
-    def zen_to_han(self):
-        bas_data = pd.read_csv('./csv/バス路線.csv')
+        to_company = {'都バス２３区':'都営バス','都バス多摩':'多摩市','東急バス':'東急バス（株）','小田急バス':'小田急バス（株）','関東バス':'関東バス（株）','西武バス':'西武バス（株）','国際興業バス':'国際興業（株）','京王バス':'京王バス','京王電鉄バス':'京王電鉄バス','京王バス小金井':'京王バス','京急バス':'京急バス','京成バス':'京成バス（株）','京成タウンバス':'京成タウンバス','東武バスセントラル':'東武バスセントラル','立川バス':'立川バス（株）','西東京バス':'西東京バス（株）','神奈川中央交通':'神奈川中央交通（株）','東京ＢＲＴ':'東京ＢＲＴ','ｋｍモビリティサービス':'ｋｍモビリティサービス','ウィラーエクスプレス':'ウィラーエクスプレス','日立自動車交通':'日立自動車交通','新日本観光自動車':'新日本観光自動車','銀河鉄道':'銀河鉄道（株）','大島バス':'大島旅客自動車（株）','八丈町営バス':'八丈町','小笠原村営バス':'小笠原村','千代田区コミュニティ':'千代田区','中央区コミュニティ':'中央区','港区コミュニティ':'港区','文京区コミュニティ':'文京区','台東区コミュニティ':'台東区','墨田区コミュニティ':'墨田区','江東区コミュニティ':'江東区','大田区コミュニティ':'大田区','渋谷区コミュニティ':'渋谷区','杉並区コミュニティ':'杉並区','北区コミュニティ':'北区','荒川区コミュニティ':'荒川区','板橋区コミュニティ':'板橋区','練馬区コミュニティ':'練馬区','武蔵野市コミュニティ':'武蔵野市','三鷹市コミュニティ':'三鷹市','狛江市コミュニティ':'狛江市','小金井市コミュニティ':'小金井市','国分寺市コミュニティ':'国分寺市','国立市コミュニティ':'国立市','立川市コミュニティ':'立川市','府中市コミュニティ':'府中市','城市コミュニティ':'城市','西東京市コミュニティ':'西東京市','小平市コミュニティ':'小平市','清瀬市コミュニティ':'清瀬市','東村山市コミュニティ':'東村山市','武蔵村山市コミュニティ':'武蔵村山市','東大和市コミュニティ':'東大和市','昭島市コミュニティ':'昭島市','羽村市コミュニティ':'羽村市','あきる野市コミュニティ':'あきる野市','八王子市コミュニティ':'八王子市','町田市コミュニティ':'町田市','日の出町コミュニティ':'日出町'}
+        bas_data = pd.read_csv('./csv/乗換案内NEXT路線.csv')
         df = pd.DataFrame(bas_data)
-        df['路線名称'] = df['路線名称'].apply(mojimoji.zen_to_han, kana=False)
-        df['バス停名称'] = df['バス停名称'].apply(mojimoji.zen_to_han, kana=False)
-        df.to_csv('./csv/バス路線.csv', index=False)
+        df = df.replace({'バス会社名称':to_company})
+        self.company_id_df = pd.merge(df, self.company_df, on=['バス会社名称'], how='left')
+        # self.company_id_df = df.loc[:, ['バス会社ID','バス停名称','路線名称']]
 
-    def route(self):
-        bas_data = pd.read_csv('./csv/バス路線.csv')
+    def rosen(self):
+        bas_data = pd.read_csv('./csv/乗換案内NEXT路線.csv')
         df = pd.DataFrame(bas_data)
-        print(df.duplicated(subset=['路線名称']).sum())
-        df.drop_duplicates(subset=['路線名称'], inplace=True)
-        for cp_id in self.cp_id_dec:
-            df.loc[df['バス会社名称']==cp_id, 'バス会社ID'] = self.cp_id_dec[cp_id]
-        df.drop(['バス会社名称', 'バス停名称', '緯度', '経度'], axis=1)
+        df.drop_duplicates(subset=['路線名称','どこからどこまで','行き方面','帰り方面'], inplace=True)
         serial_num = pd.RangeIndex(start=1, stop=len(df.index) + 1, step=1)
         df['路線ID'] = serial_num
-        df = df.loc[:, ['路線ID', 'バス会社ID', '路線名称']]
-        df.to_csv('./csv/路線.csv', index=False)
+        df = df.loc[:, ['路線ID','路線名称','どこからどこまで','行き方面','帰り方面']]
+        self.rosen_id_df = pd.merge(self.company_id_df, df, how='left', on=['路線名称','どこからどこまで','行き方面','帰り方面'])
+        rosen = self.rosen_id_df.loc[:, ['路線ID','バス会社ID','路線名称']]
+        rosen = rosen.drop_duplicates(subset=['路線ID','バス会社ID','路線名称'])
+        rosen.to_csv('./乗換NEXT全データ/路線名.csv', index=False)
 
-    def lan_lon(self):
-        bas_data = pd.read_csv('./csv/バス路線.csv')
+    def bastei_id(self):
+        bas_data = pd.read_csv('./csv/乗換案内NEXTバス停一覧.csv')
         df = pd.DataFrame(bas_data)
-        print(df.duplicated(subset=['緯度', '経度', 'バス停名称']).sum())
-        df.drop_duplicates(subset=['緯度', '経度', 'バス停名称'], inplace=True)
-        df.drop('路線名称', axis=1)
-        df = df.replace('\(.+?\)', {'バス停名称':''}, regex=True)
-        df.sort_values(by='バス停名称', inplace=True)
-        serial_num = pd.RangeIndex(start=1, stop=len(df.index) + 1, step=1)
-        df['バス停ID'] = serial_num
-        df = df.loc[:, ['バス停ID', 'バス会社名称', 'バス停名称', '緯度', '経度']]
-        df.to_csv('./csv/ver.2バス停.csv', index=False)
+        df = df.loc[:, ['バス停ID', '緯度', '経度', 'バス停名称']]
+        self.bastei_id_df = pd.merge(self.rosen_id_df, df, how='left', on=['緯度','経度', 'バス停名称'])
+        i=1
+        # l=1
+        serial_num = []
+        route_station = []
+        while ((self.bastei_id_df['路線ID']==i).sum()) != 0:
+            rosen = self.bastei_id_df[self.bastei_id_df['路線ID']==i]
+            rosen_meisyou = rosen['路線名称']
+            houmen = re.findall(r'(.*)方面',rosen['行き方面'].iloc[0])
+            from_where = re.findall(r'(.*)～',rosen['どこからどこまで'].iloc[0])
+            to_where = re.findall(r'～(.*)',rosen['どこからどこまで'].iloc[0])
+            # print(rosen['どこからどこまで'].iloc[0])
+            # print(from_where)
+            # print(to_where)
+            # print(self.bastei_id_df.loc[self.bastei_id_df.路線ID==i, '路線名称'])
+            if houmen[0] != rosen['バス停名称'].iloc[0]:
+                self.bastei_id_df.loc[self.bastei_id_df['路線ID']==i, '路線名称'] = self.bastei_id_df.loc[self.bastei_id_df['路線ID']==i, '路線名称'].replace(rosen_meisyou+'['+rosen['バス停名称'].iloc[0]+']')
+            elif rosen['バス停名称'].iloc[0] == rosen['バス停名称'].iloc[-1]:
+                self.bastei_id_df[self.bastei_id_df['路線ID']==i]['路線名称'] = rosen['路線名称'].replace(rosen_meisyou+'['+to_where[0]+']')
+            else:
+                # print(self.bastei_id_df.路線ID[self.bastei_id_df.路線ID==i])
+                self.bastei_id_df[self.bastei_id_df.路線ID==i] = self.bastei_id_df.loc[self.bastei_id_df.路線ID==i].iloc[::-1]
+                self.bastei_id_df.loc[self.bastei_id_df.路線ID==i, '路線名称'] = self.bastei_id_df.loc[self.bastei_id_df['路線ID']==i,'路線名称'].replace(rosen_meisyou+'['+self.bastei_id_df.loc[self.bastei_id_df.路線ID==i,'バス停名称'].iloc[-1]+']')
+                print(self.bastei_id_df.loc[self.bastei_id_df.路線ID==i])
+                # print(self.bastei_id_df.loc[self.bastei_id_df.路線ID==i])
+            # route_station += rosen.to_dict()
+            serial_num += list(range(1, (self.bastei_id_df['路線ID']==i).sum()+1, 1))
+            # l+=rosen.sum()
+            i+=1
+        self.bastei_id_df['停車順番'] = serial_num
+        # df = df.loc[:, ['路線ID', '停車順番', 'バス会社ID', 'バス停ID', 'バス停名称', '路線名称']]
+        # df.to_csv('./csv/路線データ.csv', index_label='ID')
+        self.bastei_id_df = self.bastei_id_df.loc[:, ['路線ID','停車順番','バス会社ID','バス停ID','バス停名称','路線名称']]
+        self.bastei_id_df.to_csv('./乗換NEXT全データ/路線データ.csv', index=False)
+
+    # def zen_to_han(self):
+    #     bas_data = pd.read_csv('./csv/バス路線.csv')
+    #     df = pd.DataFrame(bas_data)
+    #     df['路線名称'] = df['路線名称'].apply(mojimoji.zen_to_han, kana=False)
+    #     df['バス停名称'] = df['バス停名称'].apply(mojimoji.zen_to_han, kana=False)
+    #     df.to_csv('./csv/バス路線.csv', index=False)
+
+    # def route(self):
+    #     bas_data = pd.read_csv('./csv/バス路線.csv')
+    #     df = pd.DataFrame(bas_data)
+    #     print(df.duplicated(subset=['路線名称']).sum())
+    #     df.drop_duplicates(subset=['路線名称'], inplace=True)
+    #     for cp_id in self.cp_id_dec:
+    #         df.loc[df['バス会社名称']==cp_id, 'バス会社ID'] = self.cp_id_dec[cp_id]
+    #     df.drop(['バス会社名称', 'バス停名称', '緯度', '経度'], axis=1)
+    #     serial_num = pd.RangeIndex(start=1, stop=len(df.index) + 1, step=1)
+    #     df['路線ID'] = serial_num
+    #     df = df.loc[:, ['路線ID', 'バス会社ID', '路線名称']]
+    #     df.to_csv('./csv/路線.csv', index=False)
+
+    # def lan_lon(self):
+    #     bas_data = pd.read_csv('./csv/バス路線.csv')
+    #     df = pd.DataFrame(bas_data)
+    #     print(df.duplicated(subset=['緯度', '経度', 'バス停名称']).sum())
+    #     df.drop_duplicates(subset=['緯度', '経度', 'バス停名称'], inplace=True)
+    #     df.drop('路線名称', axis=1)
+    #     df = df.replace('\(.+?\)', {'バス停名称':''}, regex=True)
+    #     df.sort_values(by='バス停名称', inplace=True)
+    #     serial_num = pd.RangeIndex(start=1, stop=len(df.index) + 1, step=1)
+    #     df['バス停ID'] = serial_num
+    #     df = df.loc[:, ['バス停ID', 'バス会社名称', 'バス停名称', '緯度', '経度']]
+    #     df.to_csv('./csv/ver.2バス停.csv', index=False)
     
-    def join(self):
-        df = pd.read_csv('./csv/バス路線.csv', encoding='utf-8')
-        df2 = pd.read_csv('./csv/バス停.csv', encoding='utf-8')
-        df3 = pd.read_csv('./csv/路線.csv', encoding='utf-8')
+    # def join(self):
+    #     df = pd.read_csv('./csv/バス路線.csv', encoding='utf-8')
+    #     df2 = pd.read_csv('./csv/バス停.csv', encoding='utf-8')
+    #     df3 = pd.read_csv('./csv/路線.csv', encoding='utf-8')
 
-        # universitiesのIDを学校IDという名前に変更する
-        # df2_ = df2.rename(columns={'ID': '学校ID'})
-        df2 = df2.drop(["バス停名称","バス会社名称"],axis=1)
+    #     # universitiesのIDを学校IDという名前に変更する
+    #     # df2_ = df2.rename(columns={'ID': '学校ID'})
+    #     df2 = df2.drop(["バス停名称","バス会社名称"],axis=1)
 
-        # 学校IDというキーを元にして２つのCSVを結合する
-        df_merged = pd.merge(df, df2, on=['緯度','経度'], how='left')
-        df_merged = pd.merge(df_merged, df3, on='路線名称', how='left')
+    #     # 学校IDというキーを元にして２つのCSVを結合する
+    #     df_merged = pd.merge(df, df2, on=['緯度','経度'], how='left')
+    #     df_merged = pd.merge(df_merged, df3, on='路線名称', how='left')
 
-        df_merged.to_csv("./csv/merged.csv", index=False)
+    #     df_merged.to_csv("./csv/merged.csv", index=False)
 
 class City:
     def add_city(self):
@@ -150,7 +180,9 @@ if __name__=='__main__':
         # cleansing.company()
         # cleansing.zen_to_han()
         # cleansing.route()
-        cleansing.lan_lon()
+        cleansing.company()
+        cleansing.rosen()
+        cleansing.bastei_id()
         # cleansing.join()
     else:
         city = City()

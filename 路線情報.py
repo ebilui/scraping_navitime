@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup
 import csv
 
 class RosenJouhou:
-    def __init__(self):
-        with open('./csv/乗換案内NEXT路線.csv', 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(['会社名称', '路線名称', 'どこからどこまで', '行き方面', '帰り方面', 'バス停名称', 'url'])
+    # def __init__(self):
+    #     with open('./csv/乗換案内NEXT路線.csv', 'w', newline='', encoding='utf-8') as f:
+    #         writer = csv.writer(f)
+    #         writer.writerow(['会社名称', '路線名称', 'どこからどこまで', '行き方面', '帰り方面', 'バス停名称', 'url'])
 
     def search(self, url):
         res = requests.get(url)
@@ -82,8 +82,8 @@ class RosenJouhou:
             stop_lines.append(stop_station)
 
         lines = []
-        stop_url = []
         for i in range(len(stop_lines[0])):
+            stop_url = []
             line = []
             houmen = ''
             for l in range(len(stop_lines)):
@@ -115,6 +115,8 @@ class RosenJouhou:
                     iki_houmen = stations[0]+'方面'
                     hantai_houmen = stations[-1]+'方面'
                 for i in range(len(stations)):
+                    print(stations[i])
+                    print(urls[i])
                     writer.writerow([self.company, self.rosen, self.where_to_where, iki_houmen, hantai_houmen, stations[i], urls[i]])
 
 if __name__ == '__main__':
